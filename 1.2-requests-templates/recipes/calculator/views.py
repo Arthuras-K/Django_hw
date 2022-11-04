@@ -16,15 +16,45 @@ DATA = {
         'сыр, ломтик': 1,
         'помидор, ломтик': 1,
     },
-    # можете добавить свои рецепты ;)
 }
 
-# Напишите ваш обработчик. Используйте DATA как источник данных
-# Результат - render(request, 'calculator/index.html', context)
-# В качестве контекста должен быть передан словарь с рецептом:
-# context = {
-#   'recipe': {
-#     'ингредиент1': количество1,
-#     'ингредиент2': количество2,
-#   }
-# }
+def index(request):
+    context = {
+        'DATA': DATA,
+    }
+    return render(request, 'calculator/index.html', context)
+
+def omlet(request):
+    serv_number = int(request.GET.get('servings', 1))    
+    dish = {}
+    for item in DATA['omlet']:
+        dish[item] = DATA['omlet'][item] * serv_number
+    context = {
+        'dish': dish,
+        'serv_number': serv_number,
+    }
+    return render( request, 'calculator/omlet.html', context)
+
+def pasta(request):
+    serv_number = int(request.GET.get('servings', 1))    
+    dish = {}
+    for item in DATA['pasta']:
+        dish[item] = DATA['pasta'][item] * serv_number
+    context = {
+        'dish': dish,
+        'serv_number': serv_number,
+    }
+    return render( request, 'calculator/pasta.html', context)
+
+def buter(request):
+    serv_number = int(request.GET.get('servings', 1))    
+    dish = {}
+    for item in DATA['buter']:
+        dish[item] = DATA['buter'][item] * serv_number
+    context = {
+        'dish': dish,
+        'serv_number': serv_number,
+    }
+    return render( request, 'calculator/buter.html', context)
+
+

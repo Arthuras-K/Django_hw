@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бутерброд</title>
+</head>
+<body>
+<h3>Бутерброд</h3>
+<p>Рецепт бутерброда на кол-во персон: {{serv_number}}</p>
+{% for ingredient, amount in dish.items %}
+    <li>{{ ingredient }}: <b>{{ amount }}</b></li>
+{% endfor %}
+<br>
+<form action="/">
+    <button>Вернутся в главнео меню</button>
+</form>
+</body>
+</html>
