@@ -1,43 +1,53 @@
 from rest_framework import serializers
+from .models import Product, StockProduct, Stock
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    # настройте сериализатор для продукта
-    pass
+    class Meta:
+        model = Product
+        fields = ['id', 'title', 'description']
 
 
 class ProductPositionSerializer(serializers.ModelSerializer):
-    # настройте сериализатор для позиции продукта на складе
-    pass
+    class Meta:
+        model = StockProduct
+        fields = ['product', 'price', 'quantity']
 
 
 class StockSerializer(serializers.ModelSerializer):
     positions = ProductPositionSerializer(many=True)
 
-    # настройте сериализатор для склада
+    class Meta:
+        model = Stock
+        fields = ['id', 'address', 'products', 'positions']
 
     def create(self, validated_data):
-        # достаем связанные данные для других таблиц
         positions = validated_data.pop('positions')
+        new_stock = super().create(validated_data)
 
-        # создаем склад по его параметрам
-        stock = super().create(validated_data)
+        for product in positions:
+            stock_product = StockProduct(
+                stock = new_stock,
+                product = product.get('product'),
+                quantity = product.get('quantity'),
+                price = product.get('price')
+            )
+            stock_product.save()
 
-        # здесь вам надо заполнить связанные таблицы
-        # в нашем случае: таблицу StockProduct
-        # с помощью списка positions
+        return new_stock
 
-        return stock
 
     def update(self, instance, validated_data):
-        # достаем связанные данные для других таблиц
         positions = validated_data.pop('positions')
-
-        # обновляем склад по его параметрам
         stock = super().update(instance, validated_data)
 
-        # здесь вам надо обновить связанные таблицы
-        # в нашем случае: таблицу StockProduct
-        # с помощью списка positions
+        for product in positions:
+            update_stock = StockProduct.objects.update_or_create(
+                stock = stock,
+                product = product.get('product'),
+                defaults = {'price': product.get('price'), 
+                'quantity': product.get('quantity')}
+            )
+            update_stock.save()
 
         return stock
