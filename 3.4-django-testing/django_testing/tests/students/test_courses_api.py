@@ -84,6 +84,7 @@ def test_post_course(client):
     response = response_get.json()
 
     assert response_post.status_code == 201
+    assert response[0]['name'] == course['name']
     
 
 @pytest.mark.django_db
